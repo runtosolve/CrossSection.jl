@@ -1,0 +1,9 @@
+name = "CrossSection"
+uuid = "a0443d1a-7a62-4d3d-b993-57eb2183b07a"
+authors = ["Cris Moen <cris.moen@runtosolve.com>"]
+version = "0.1.0"
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+LinesCurves = "d884b968-ac0b-4335-8938-3ac3ffb669c0"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
