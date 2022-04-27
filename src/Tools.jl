@@ -133,43 +133,117 @@ end
 
 
 # calculate average unit normals at each node in a 2D cross-section from element unit normals
-function calculate_node_normals(unit_element_normals, section_type)
+# function calculate_node_normals(unit_element_normals, section_type)
 
-    if section_type == "closed"
-        numnodes = size(unit_element_normals)[1]
-        numel = size(unit_element_normals)[1]
-    elseif section_type == "open"
-        numnodes = size(unit_element_normals)[1] + 1
-        numel = size(unit_element_normals)[1]
-    end
+#     if section_type == "closed"
+#         numnodes = size(unit_element_normals)[1]
+#         numel = size(unit_element_normals)[1]
+#     elseif section_type == "open"
+#         numnodes = size(unit_element_normals)[1] + 1
+#         numel = size(unit_element_normals)[1]
+#     end
 
-    node_normals = zeros(Float64, (numnodes, 2))
+#     node_normals = zeros(Float64, (numnodes, 2))
 
-    for i=1:numnodes
+#     for i=1:numnodes
 
-        if (i == 1) & (section_type == "closed")  # where nodes meet in the tube
-            node_normals[i, :] = mean(unit_element_normals[[numel, 1], :], dims=1)
-        elseif (i != 1) & (section_type == "closed")  #tube
-            node_normals[i, :] = mean(unit_element_normals[i-1:i, :], dims=1)
-        elseif (i == 1) & (section_type == "open")  #open, first node is element norm
-            node_normals[i, :] = unit_element_normals[i, :]
-        elseif (i != 1) & (i != numnodes) & (section_type == "open")  #open
-            node_normals[i, :] = mean(unit_element_normals[i-1:i, :], dims=1)
-        elseif (i == numnodes) & (section_type == "open")  #open, last node is element norm
-            node_normals[i, :] = unit_element_normals[i-1, :]
+#         if (i == 1) & (section_type == "closed")  # where nodes meet in the tube
+#             node_normals[i, :] = mean(unit_element_normals[[numel, 1], :], dims=1)
+#         elseif (i != 1) & (section_type == "closed")  #tube
+#             node_normals[i, :] = mean(unit_element_normals[i-1:i, :], dims=1)
+#         elseif (i == 1) & (section_type == "open")  #open, first node is element norm
+#             node_normals[i, :] = unit_element_normals[i, :]
+#         elseif (i != 1) & (i != numnodes) & (section_type == "open")  #open
+#             node_normals[i, :] = mean(unit_element_normals[i-1:i, :], dims=1)
+#         elseif (i == numnodes) & (section_type == "open")  #open, last node is element norm
+#             node_normals[i, :] = unit_element_normals[i-1, :]
+
+#         end
+
+#         #make sure unit normal always = 1.0
+#         unitnorm = norm(node_normals[i, :])
+#         if unitnorm < 0.99
+#             scale = 1.0/unitnorm
+#             node_normals[i,:] = scale .* node_normals[i,:]
+#         end
+
+#     end
+
+#     return nodenormals
+
+# end
+
+
+
+function calculate_node_normal(A, B, C)
+
+    BC = C-B
+    BA = A-B
+
+    BR = BA + BC/norm(BC) * norm(BA)
+
+    return BR
+
+end
+
+
+function calculate_cross_section_unit_node_normals(cross_section)
+
+    num_nodes = size(cross_section)[1]
+    unit_node_normals = Array{Vector{Float64}}(undef, num_nodes)
+
+    for i=1:num_nodes
+
+        if i == 1
+
+            A = [cross_section[1, 1], cross_section[1, 2]]
+            B = [cross_section[2, 1], cross_section[2, 2]]
+
+            BA = A-B
+
+            unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
+
+        elseif i == num_nodes
+
+            A = [cross_section[end-1, 1], cross_section[end-1, 2]]
+            B = [cross_section[end, 1], cross_section[end, 2]]
+
+            BA = A-B
+
+            unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
+
+        else
+
+            A = [cross_section[i-1, 1], cross_section[i-1, 2]]
+            B = [cross_section[i, 1], cross_section[i, 2]]
+            C = [cross_section[i+1, 1], cross_section[i+1, 2]]
+
+            node_normal = calculate_node_normal(A, B, C)
+
+            if isapprox(abs.(node_normal), [0.0, 0.0], atol=1e-8)
+    
+                BA = A-B
+                unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
+
+            else
+
+                unit_node_normals[i] = -node_normal / norm(node_normal)
+
+            end
 
         end
 
-        #make sure unit normal always = 1.0
-        unitnorm = norm(node_normals[i, :])
-        if unitnorm < 0.99
-            scale = 1.0/unitnorm
-            node_normals[i,:] = scale .* node_normals[i,:]
+        if unit_node_normals[i,1] == -0.0
+            unit_node_normals[i,1]= 0.0
+        end
+
+        if unit_node_normals[i,2] == -0.0
+            unit_node_normals[i,2]= 0.0
         end
 
     end
 
-    return nodenormals
+    return unit_node_normals
 
 end
 
