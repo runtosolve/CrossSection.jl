@@ -27,6 +27,8 @@ function generate_open(L, θ, r, n, n_radius)
 
     cross_section = vcat(cross_section...)
 
+    cross_section = unique(cross_section, dims=1)
+
     return cross_section
 
 end

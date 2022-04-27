@@ -1,6 +1,6 @@
 module Tools
 
-using LinesCurves, LinearAlgebra, StaticArrays
+using LinesCurvesNodes, LinearAlgebra, StaticArrays
 
 
 function lay_out_cross_section_nodes(L, θ)
@@ -21,7 +21,7 @@ function lay_out_cross_section_nodes(L, θ)
 
         end
 
-        cross_section[i] = LinesCurves.transform_vector(L[i], start_node, θ[i])
+        cross_section[i] = LinesCurvesNodes.transform_vector(L[i], start_node, θ[i])
 
     end
 
@@ -43,7 +43,7 @@ function generate_cross_section_rounded_corners(cross_section_nodes, r, n)
         B = vec(cross_section_nodes[i+1])
         C = vec(cross_section_nodes[i+2])
     
-        corners[i] = LinesCurves.generate_fillet(A, B, C, r[i], n[i])
+        corners[i] = LinesCurvesNodes.generate_fillet(A, B, C, r[i], n[i])
 
    end
 
@@ -79,7 +79,7 @@ function generate_straight_line_segments(cross_section_nodes, corners, n)
 
         end
 
-        segments[i] = LinesCurves.discretize_vector(A, B, n[i])
+        segments[i] = LinesCurvesNodes.discretize_vector(A, B, n[i])
 
     end
 
@@ -90,83 +90,81 @@ end
 
 
 
-# calculate surface normals for each line segment in a 2D cross-section
-function surface_normals(xcoords, ycoords, closed_or_open)
+# # calculate surface normals for each line segment in a 2D cross-section
+# function calculate_element_surface_normals(xcoords, ycoords, section_type)
+   
+#     if section_type == "closed"
+#         numel = length(xcoords)   #closed
+#     elseif section_type == "open"
+#         numel = length(xcoords) - 1  #open
+#     end
 
+#     unit_element_normals = zeros(Float64, (numel, 2))
 
-    if closed_or_open == 0
-        numel = length(xcoords)   #closed
-    elseif closed_or_open ==1
-        numel = length(xcoords) - 1  #open
-    end
+#     for i=1:numel
 
-    unitnormals = zeros(Float64, (numel, 2))
+#         if (i == numel) & (section_type == "closed")   #for tubes
+#             A = [xcoords[i], ycoords[i]]
+#             B = [xcoords[1], ycoords[1]]
+#         else
+#             A = [xcoords[i], ycoords[i]]
+#             B = [xcoords[i + 1], ycoords[i + 1]]
+#         end
 
-    for i=1:numel
+#         AB = B - A
 
-        if (i == numel) & (closed_or_open == 0)   #for tubes
-            pointA = Point(xcoords[i], ycoords[i])
-            pointB = Point(xcoords[1], ycoords[1])
-        else
-            pointA = Point(xcoords[i], ycoords[i])
-            pointB = Point(xcoords[i + 1], ycoords[i + 1])
-        end
+#         normAB = norm(AB)
 
-        dx = pointB.x - pointA.x
-        dy = pointB.y - pointA.y
+#         unit_element_normals[i, :] = [-AB[2], AB[1]] / normAB
 
-        normAB = norm([dx, dy])
+#         if unit_element_normals[i,1] == -0.0
+#             unit_element_normals[i,1]= 0.0
+#         end
 
-        unitnormals[i, :] = [-dy, dx] / normAB
+#         if unit_element_normals[i,2] == -0.0
+#             unit_element_normals[i,2]= 0.0
+#         end
 
-        if unitnormals[i,1] == -0.0
-            unitnormals[i,1]= 0.0
-        end
+#     end
 
-        if unitnormals[i,2] == -0.0
-            unitnormals[i,2]= 0.0
-        end
+#     return unit_element_normals
 
-    end
-
-    return unitnormals
-
-end
+# end
 
 
 # calculate average unit normals at each node in a 2D cross-section from element unit normals
-function avg_node_normals(unitnormals, closed_or_open)
+function calculate_node_normals(unit_element_normals, section_type)
 
-    if closed_or_open == 0
-        numnodes = size(unitnormals)[1]
-        numel = size(unitnormals)[1]
-    elseif closed_or_open ==1
-        numnodes = size(unitnormals)[1]+1
-        numel = size(unitnormals)[1]
+    if section_type == "closed"
+        numnodes = size(unit_element_normals)[1]
+        numel = size(unit_element_normals)[1]
+    elseif section_type == "open"
+        numnodes = size(unit_element_normals)[1] + 1
+        numel = size(unit_element_normals)[1]
     end
 
-    nodenormals = zeros(Float64, (numnodes, 2))
+    node_normals = zeros(Float64, (numnodes, 2))
 
     for i=1:numnodes
 
-        if (i == 1) & (closed_or_open == 0)  # where nodes meet in the tube
-            nodenormals[i, :] = mean(unitnormals[[numel, 1], :], dims=1)
-        elseif (i != 1) & (closed_or_open == 0)  #tube
-            nodenormals[i, :] = mean(unitnormals[i-1:i, :], dims=1)
-        elseif (i == 1) & (closed_or_open == 1)  #open, first node is element norm
-            nodenormals[i, :] = unitnormals[i, :]
-        elseif (i != 1) & (i != numnodes) & (closed_or_open == 1)  #open
-            nodenormals[i, :] = mean(unitnormals[i-1:i, :], dims=1)
-        elseif (i == numnodes) & (closed_or_open == 1)  #open, last node is element norm
-            nodenormals[i, :] = unitnormals[i-1, :]
+        if (i == 1) & (section_type == "closed")  # where nodes meet in the tube
+            node_normals[i, :] = mean(unit_element_normals[[numel, 1], :], dims=1)
+        elseif (i != 1) & (section_type == "closed")  #tube
+            node_normals[i, :] = mean(unit_element_normals[i-1:i, :], dims=1)
+        elseif (i == 1) & (section_type == "open")  #open, first node is element norm
+            node_normals[i, :] = unit_element_normals[i, :]
+        elseif (i != 1) & (i != numnodes) & (section_type == "open")  #open
+            node_normals[i, :] = mean(unit_element_normals[i-1:i, :], dims=1)
+        elseif (i == numnodes) & (section_type == "open")  #open, last node is element norm
+            node_normals[i, :] = unit_element_normals[i-1, :]
 
         end
 
         #make sure unit normal always = 1.0
-        unitnorm = norm(nodenormals[i, :])
+        unitnorm = norm(node_normals[i, :])
         if unitnorm < 0.99
             scale = 1.0/unitnorm
-            nodenormals[i,:] = scale .* nodenormals[i,:]
+            node_normals[i,:] = scale .* node_normals[i,:]
         end
 
     end
