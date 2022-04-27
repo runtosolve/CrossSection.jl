@@ -248,7 +248,7 @@ function calculate_cross_section_unit_node_normals(cross_section)
 end
 
 
-function xycoords_along_normal(xcoords, ycoords, nodenormals, Δ)
+function get_coords_along_node_normals(xcoords, ycoords, unit_node_normals, Δ)
 
     numnodes = size(xcoords)[1]
     xcoords_normal = []
@@ -258,13 +258,13 @@ function xycoords_along_normal(xcoords, ycoords, nodenormals, Δ)
 
         if i == 1
 
-            xcoords_normal = xcoords[i] + nodenormals[i, 1] * Δ
-            ycoords_normal = ycoords[i] + nodenormals[i, 2] * Δ
+            xcoords_normal = xcoords[i] + unit_node_normals[i][1] * Δ
+            ycoords_normal = ycoords[i] + unit_node_normals[i][2] * Δ
 
         else
 
-            xcoords_normal = [xcoords_normal; (xcoords[i] + nodenormals[i, 1] * Δ)]
-            ycoords_normal = [ycoords_normal; (ycoords[i] + nodenormals[i, 2] * Δ)]
+            xcoords_normal = [xcoords_normal; (xcoords[i] + unit_node_normals[i][1] * Δ)]
+            ycoords_normal = [ycoords_normal; (ycoords[i] + unit_node_normals[i][2] * Δ)]
 
         end
 
