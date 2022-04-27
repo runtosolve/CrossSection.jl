@@ -233,12 +233,12 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
         end
 
-        if unit_node_normals[i,1] == -0.0
-            unit_node_normals[i,1]= 0.0
+        if unit_node_normals[i][1] == -0.0
+            unit_node_normals[i][1]= 0.0
         end
 
-        if unit_node_normals[i,2] == -0.0
-            unit_node_normals[i,2]= 0.0
+        if unit_node_normals[i][2] == -0.0
+            unit_node_normals[i][2]= 0.0
         end
 
     end
