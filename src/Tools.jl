@@ -227,7 +227,7 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
             else
 
-                unit_node_normals[i] = -node_normal / norm(node_normal)
+                unit_node_normals[i] = node_normal / norm(node_normal)
 
             end
 
