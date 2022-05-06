@@ -1,6 +1,6 @@
 module Tools
 
-using LinesCurvesNodes, LinearAlgebra, StaticArrays
+using LinesCurvesNodes, LinearAlgebra, StaticArrays, LazySets
 
 
 function lay_out_cross_section_nodes(L, θ)
@@ -203,6 +203,8 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
             unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
 
+            unit_node_normals[i] = right_halfspace_normal_correction(A, B, unit_node_normals[i]) 
+
         elseif i == num_nodes
 
             A = [cross_section[end-1, 1], cross_section[end-1, 2]]
@@ -211,6 +213,8 @@ function calculate_cross_section_unit_node_normals(cross_section)
             BA = A-B
 
             unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
+
+            unit_node_normals[i] = right_halfspace_normal_correction(A, B, unit_node_normals[i]) 
 
         else
 
@@ -225,9 +229,13 @@ function calculate_cross_section_unit_node_normals(cross_section)
                 BA = A-B
                 unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
 
+                unit_node_normals[i] = right_halfspace_normal_correction(A, B, unit_node_normals[i]) 
+
             else
 
                 unit_node_normals[i] = -node_normal / norm(node_normal)
+
+                unit_node_normals[i] = right_halfspace_normal_correction(A, B, unit_node_normals[i]) 
 
             end
 
@@ -271,6 +279,19 @@ function get_coords_along_node_normals(xcoords, ycoords, unit_node_normals, Δ)
     end
 
     return xcoords_normal, ycoords_normal
+
+end
+
+function right_halfspace_normal_correction(A, B, normal) 
+
+    s = LineSegment(A, B)
+    hs = halfspace_right(s) #for counterclockwise node layout, right is outside
+    dA = A + 1.0 * normal
+    if !∈(dA, hs)  #is the node normal pointing outside or inside, if it is pointing inside, reverse sign to make it point outside
+        normal = -normal
+    end
+
+    return normal
 
 end
 
