@@ -7,7 +7,7 @@ function lay_out_cross_section_nodes(L, θ)
 
     num_segments = length(L)
 
-    cross_section = Array{SVector{2, Float64}}(undef, num_segments)
+    cross_section = Array{Vector{Float64}}(undef, num_segments)
 
     for i in eachindex(L)
 
@@ -21,11 +21,13 @@ function lay_out_cross_section_nodes(L, θ)
 
         end
 
-        cross_section[i] = LinesCurvesNodes.transform_vector(L[i], start_node, θ[i])
+        cross_section[i] = round.(LinesCurvesNodes.transform_vector(L[i], start_node, θ[i]), digits=5)
+
+        cross_section[i] = remove_negative_zeros(cross_section[i])
 
     end
 
-    cross_section = [[[0.0 0.0]]; cross_section] #add start node at unity
+    cross_section = [[[0.0, 0.0]]; cross_section] #add start node at unity
 
     return cross_section
 
@@ -35,17 +37,27 @@ end
 
 function generate_cross_section_rounded_corners(cross_section_nodes, r, n)
 
-    corners = Array{Matrix{Float64}}(undef, length(r))
+    corners = Array{Array{Vector{Float64}}}(undef, length(r))
 
-   for i in eachindex(r)
+    for i in eachindex(r)
 
-        A = vec(cross_section_nodes[i]) #need vector format here for fillet calculations
-        B = vec(cross_section_nodes[i+1])
-        C = vec(cross_section_nodes[i+2])
-    
+        if (i == length(r)) & (cross_section_nodes[1] == cross_section_nodes[end]) #closed section
+
+            A = cross_section_nodes[end-1] 
+            B = cross_section_nodes[1]
+            C = cross_section_nodes[2]
+
+        else #open section 
+
+            A = cross_section_nodes[i] 
+            B = cross_section_nodes[i+1]
+            C = cross_section_nodes[i+2]
+
+        end
+        
         corners[i] = LinesCurvesNodes.generate_fillet(A, B, C, r[i], n[i])
 
-   end
+    end
 
    return corners
 
@@ -55,124 +67,84 @@ end
 
 function generate_straight_line_segments(cross_section_nodes, corners, n)
 
-    segments = Array{Matrix{Float64}}(undef, length(n))
+    segments = Array{Vector{Vector{Float64}}}(undef, length(n))
 
-    corner_index = 1
+    if corners == []
 
-    for i in eachindex(n)
+        for i in eachindex(n)
 
-        if i == 1
+            A = cross_section_nodes[i]
+            B = cross_section_nodes[i+1]
 
-            A = vec(cross_section_nodes[1])
-            B = corners[1][1,:]
-
-
-        elseif i == length(n)
-
-            A = corners[corner_index][end, :]
-            B = vec(cross_section_nodes[end])
-
-        else
-            A = corners[corner_index][end, :]
-            corner_index += 1
-            B = corners[corner_index][1, :]
+            segments[i] = LinesCurvesNodes.discretize_vector(A, B, n[i])
 
         end
 
-        segments[i] = LinesCurvesNodes.discretize_vector(A, B, n[i])
+    else 
+
+        if cross_section_nodes[1] != cross_section_nodes[end]  #open cross-sections 
+
+            corner_index = 1
+
+            for i in eachindex(n)
+
+                if i == 1
+
+                    A = cross_section_nodes[1]
+                    B = corners[1][1]
+
+
+                elseif i == length(n)
+
+                    A = corners[corner_index][end]
+                    B = cross_section_nodes[end]
+
+                else
+                    A = corners[corner_index][end]
+                    corner_index += 1
+                    B = corners[corner_index][1]
+
+                end
+
+                segments[i] = LinesCurvesNodes.discretize_vector(A, B, n[i])
+
+            end
+
+        else  #closed cross-sections
+
+            corner_index = 1
+
+            for i in eachindex(n)
+
+                if i == 1
+
+                    A = corners[end][end]
+                    B = corners[1][1]
+
+
+                elseif i == length(n)
+
+                    A = corners[corner_index][end]
+                    B = corners[end][1]
+
+                else
+                    A = corners[corner_index][end]
+                    corner_index += 1
+                    B = corners[corner_index][1]
+
+                end
+
+                segments[i] = LinesCurvesNodes.discretize_vector(A, B, n[i])
+
+            end   
+            
+        end
 
     end
 
     return segments
 
 end
-
-
-
-
-# # calculate surface normals for each line segment in a 2D cross-section
-# function calculate_element_surface_normals(xcoords, ycoords, section_type)
-   
-#     if section_type == "closed"
-#         numel = length(xcoords)   #closed
-#     elseif section_type == "open"
-#         numel = length(xcoords) - 1  #open
-#     end
-
-#     unit_element_normals = zeros(Float64, (numel, 2))
-
-#     for i=1:numel
-
-#         if (i == numel) & (section_type == "closed")   #for tubes
-#             A = [xcoords[i], ycoords[i]]
-#             B = [xcoords[1], ycoords[1]]
-#         else
-#             A = [xcoords[i], ycoords[i]]
-#             B = [xcoords[i + 1], ycoords[i + 1]]
-#         end
-
-#         AB = B - A
-
-#         normAB = norm(AB)
-
-#         unit_element_normals[i, :] = [-AB[2], AB[1]] / normAB
-
-#         if unit_element_normals[i,1] == -0.0
-#             unit_element_normals[i,1]= 0.0
-#         end
-
-#         if unit_element_normals[i,2] == -0.0
-#             unit_element_normals[i,2]= 0.0
-#         end
-
-#     end
-
-#     return unit_element_normals
-
-# end
-
-
-# calculate average unit normals at each node in a 2D cross-section from element unit normals
-# function calculate_node_normals(unit_element_normals, section_type)
-
-#     if section_type == "closed"
-#         numnodes = size(unit_element_normals)[1]
-#         numel = size(unit_element_normals)[1]
-#     elseif section_type == "open"
-#         numnodes = size(unit_element_normals)[1] + 1
-#         numel = size(unit_element_normals)[1]
-#     end
-
-#     node_normals = zeros(Float64, (numnodes, 2))
-
-#     for i=1:numnodes
-
-#         if (i == 1) & (section_type == "closed")  # where nodes meet in the tube
-#             node_normals[i, :] = mean(unit_element_normals[[numel, 1], :], dims=1)
-#         elseif (i != 1) & (section_type == "closed")  #tube
-#             node_normals[i, :] = mean(unit_element_normals[i-1:i, :], dims=1)
-#         elseif (i == 1) & (section_type == "open")  #open, first node is element norm
-#             node_normals[i, :] = unit_element_normals[i, :]
-#         elseif (i != 1) & (i != numnodes) & (section_type == "open")  #open
-#             node_normals[i, :] = mean(unit_element_normals[i-1:i, :], dims=1)
-#         elseif (i == numnodes) & (section_type == "open")  #open, last node is element norm
-#             node_normals[i, :] = unit_element_normals[i-1, :]
-
-#         end
-
-#         #make sure unit normal always = 1.0
-#         unitnorm = norm(node_normals[i, :])
-#         if unitnorm < 0.99
-#             scale = 1.0/unitnorm
-#             node_normals[i,:] = scale .* node_normals[i,:]
-#         end
-
-#     end
-
-#     return nodenormals
-
-# end
-
 
 
 function calculate_node_normal(A, B, C)
@@ -241,13 +213,16 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
         end
 
-        if unit_node_normals[i][1] == -0.0
-            unit_node_normals[i][1]= 0.0
-        end
 
-        if unit_node_normals[i][2] == -0.0
-            unit_node_normals[i][2]= 0.0
-        end
+        unit_node_normals[i] = remove_negative_zeros(unit_node_normals[i])
+
+        # if unit_node_normals[i][1] == -0.0
+        #     unit_node_normals[i][1]= 0.0
+        # end
+
+        # if unit_node_normals[i][2] == -0.0
+        #     unit_node_normals[i][2]= 0.0
+        # end
 
     end
 
@@ -292,6 +267,25 @@ function right_halfspace_normal_correction(A, B, normal)
     end
 
     return normal
+
+end
+
+
+function remove_negative_zeros(coord)
+
+    if coord[1] === -0.0
+
+        coord[1] = 0.0
+
+    end
+
+    if coord[2] === -0.0
+
+        coord[2] = 0.0
+
+    end
+
+    return coord
 
 end
 

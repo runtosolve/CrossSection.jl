@@ -4,11 +4,61 @@ export Tools
 include("Tools.jl")
 using .Tools
 
-function generate_open(L, θ, r, n, n_radius)
+function generate_thin_walled(L, θ, n)
+
+    #anchor points
+    cross_section_nodes = Tools.lay_out_cross_section_nodes(L, θ)
+
+    #no corners in this method
+    corners = []
+    flats = Tools.generate_straight_line_segments(cross_section_nodes, corners, n)
+    
+    cross_section = Array{Vector{Float64}}(undef, 0)
+    
+    #round 
+    for i in eachindex(flats)
+    
+        flats[i] = [round.(flats[i][j], digits=5) for j in eachindex(flats)]
+    
+    end
+
+    #combine flats
+    for i in eachindex(flats)
+    
+        cross_section = vcat(cross_section, flats[i])
+    
+    end
+    
+    #remove negative zeros
+    for i in eachindex(cross_section)
+    
+        if cross_section[i][1] === -0.0
+    
+            cross_section[i][1] = 0.0
+    
+        end
+    
+        if cross_section[i][2] === -0.0
+    
+            cross_section[i][2] = 0.0
+    
+        end
+    
+    end
+
+    #remove repeats
+    cross_section = unique(cross_section)
+
+    return cross_section
+
+end
+
+
+function generate_thin_walled(L, θ, n, r, n_r)
 
     cross_section_nodes = Tools.lay_out_cross_section_nodes(L, θ)
 
-    corners = Tools.generate_cross_section_rounded_corners(cross_section_nodes, r, n_radius)
+    corners = Tools.generate_cross_section_rounded_corners(cross_section_nodes, r, n_r)
 
     flats = Tools.generate_straight_line_segments(cross_section_nodes, corners, n)
 
@@ -27,9 +77,15 @@ function generate_open(L, θ, r, n, n_radius)
 
     cross_section = vcat(cross_section...)
 
-    cross_section = round.(cross_section, sigdigits=5)   #round to help unique function work
+    for i in eachindex(cross_section)
 
-    cross_section = unique(cross_section, dims=1)
+        cross_section[i] = round.(cross_section[i], digits=5)
+
+        cross_section[i] = CrossSection.Tools.remove_negative_zeros(cross_section[i])
+
+    end
+
+    cross_section = unique(cross_section)
 
     return cross_section
 
