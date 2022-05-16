@@ -168,14 +168,41 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
         if i == 1
 
-            A = cross_section[1]
-            B = cross_section[2]
+            if cross_section[end] == cross_section[1]  #closed cross-sections
 
-            BA = A-B
+                A = cross_section[end-1]
+                B = cross_section[1]
+                C = cross_section[2]
 
-            unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
+                node_normal = calculate_node_normal(A, B, C)
 
-            unit_node_normals[i] = right_halfspace_normal_correction(A, B, unit_node_normals[i]) 
+                if isapprox(abs.(node_normal), [0.0, 0.0], atol=1e-8)
+        
+                    BA = A-B
+                    unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
+
+                    unit_node_normals[i] = right_halfspace_normal_correction(A, B, unit_node_normals[i]) 
+
+                else
+
+                    unit_node_normals[i] = -node_normal / norm(node_normal)
+
+                    unit_node_normals[i] = right_halfspace_normal_correction(A, B, unit_node_normals[i]) 
+
+                end
+
+            else  #open cross-sections 
+
+                A = cross_section[1]
+                B = cross_section[2]
+
+                BA = A-B
+
+                unit_node_normals[i] = [-BA[2], BA[1]] / norm(BA)
+
+                unit_node_normals[i] = right_halfspace_normal_correction(A, B, unit_node_normals[i]) 
+
+            end
 
         elseif i == num_nodes
 
@@ -216,14 +243,6 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
         unit_node_normals[i] = remove_negative_zeros(unit_node_normals[i])
 
-        # if unit_node_normals[i][1] == -0.0
-        #     unit_node_normals[i][1]= 0.0
-        # end
-
-        # if unit_node_normals[i][2] == -0.0
-        #     unit_node_normals[i][2]= 0.0
-        # end
-
     end
 
     return unit_node_normals
@@ -231,31 +250,20 @@ function calculate_cross_section_unit_node_normals(cross_section)
 end
 
 
-function get_coords_along_node_normals(xcoords, ycoords, unit_node_normals, Δ)
+function get_coords_along_node_normals(cross_section, unit_node_normals, Δ)
 
-    numnodes = size(xcoords)[1]
-    xcoords_normal = []
-    ycoords_normal = []
+    normal_cross_section = Array{Vector{Float64}}(undef, 0)
 
-    for i=1:numnodes
+    for i in eachindex(cross_section)
 
-        if i == 1
-
-            xcoords_normal = xcoords[i] + unit_node_normals[i][1] * Δ
-            ycoords_normal = ycoords[i] + unit_node_normals[i][2] * Δ
-
-        else
-
-            xcoords_normal = [xcoords_normal; (xcoords[i] + unit_node_normals[i][1] * Δ)]
-            ycoords_normal = [ycoords_normal; (ycoords[i] + unit_node_normals[i][2] * Δ)]
-
-        end
+        push!(normal_cross_section, cross_section[i] + unit_node_normals[i] * Δ)
 
     end
 
-    return xcoords_normal, ycoords_normal
+    return normal_cross_section
 
 end
+
 
 function right_halfspace_normal_correction(A, B, normal) 
 

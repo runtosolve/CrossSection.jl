@@ -47,7 +47,8 @@ function generate_thin_walled(L, θ, n)
     end
 
     #remove repeats
-    cross_section = unique(cross_section)
+    cross_section = unique(cross_section[2:end])
+    cross_section = pushfirst!(cross_section, [0.0, 0.0]) #for closed sections 
 
     return cross_section
 
