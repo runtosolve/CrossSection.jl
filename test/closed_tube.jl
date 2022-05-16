@@ -16,3 +16,6 @@ cross_section = CrossSection.generate_thin_walled(L, θ, n, r, n_r)
 #straight corner
 cross_section = CrossSection.generate_thin_walled(L, θ, n)
 
+
+unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(cross_section)
+

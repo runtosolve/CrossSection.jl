@@ -168,8 +168,8 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
         if i == 1
 
-            A = [cross_section[1, 1], cross_section[1, 2]]
-            B = [cross_section[2, 1], cross_section[2, 2]]
+            A = cross_section[1]
+            B = cross_section[2]
 
             BA = A-B
 
@@ -179,8 +179,8 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
         elseif i == num_nodes
 
-            A = [cross_section[end-1, 1], cross_section[end-1, 2]]
-            B = [cross_section[end, 1], cross_section[end, 2]]
+            A = cross_section[end-1]
+            B = cross_section[end]
 
             BA = A-B
 
@@ -190,9 +190,9 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
         else
 
-            A = [cross_section[i-1, 1], cross_section[i-1, 2]]
-            B = [cross_section[i, 1], cross_section[i, 2]]
-            C = [cross_section[i+1, 1], cross_section[i+1, 2]]
+            A = cross_section[i-1]
+            B = cross_section[i]
+            C = cross_section[i+1]
 
             node_normal = calculate_node_normal(A, B, C)
 

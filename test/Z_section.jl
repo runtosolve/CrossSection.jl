@@ -41,8 +41,10 @@ r = [r_bottom_flange_lip - t, r_bottom_flange_web - t, r_top_flange_web, r_top_f
 cross_section = CrossSection.generate_thin_walled(L, θ, n, r, n_r)
 
 
+X = [cross_section[i][1] for i in eachindex(cross_section)]
+Y = [cross_section[i][2] for i in eachindex(cross_section)]
 
-
+plot(X, Y, markershape = :o, aspect_ratio = :equal)
 
 #####
 #Get outside coords 
