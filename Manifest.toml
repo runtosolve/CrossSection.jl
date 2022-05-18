@@ -207,9 +207,9 @@ version = "1.0.0"
 
 [[deps.LazySets]]
 deps = ["Distributed", "ExprTools", "GLPK", "InteractiveUtils", "IntervalArithmetic", "JuMP", "LinearAlgebra", "Pkg", "Random", "RecipesBase", "Reexport", "Requires", "SharedArrays", "SparseArrays"]
-git-tree-sha1 = "0c8cd82d402a8fba49cd88ca5bcde9d22ab1bdcb"
+git-tree-sha1 = "3080f7bac6e093e6883ae31c61745c2b699ead2a"
 uuid = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-version = "1.56.3"
+version = "1.57.0"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -279,9 +279,9 @@ uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 
 [[deps.MutableArithmetics]]
 deps = ["LinearAlgebra", "SparseArrays", "Test"]
-git-tree-sha1 = "ba8c0f8732a24facba709388c74ba99dcbfdda1e"
+git-tree-sha1 = "4050cd02756970414dab13b55d55ae1826b19008"
 uuid = "d8a4904e-b15c-11e9-3269-09a3773c0cb0"
-version = "1.0.0"
+version = "1.0.2"
 
 [[deps.NaNMath]]
 git-tree-sha1 = "737a5957f387b17e74d4ad2f440eb330b39a62c5"

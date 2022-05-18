@@ -3,7 +3,7 @@ using CrossSection, Plots
 
 cross_section_dimensions = [("Z", 0.059, 0.91, 2.5, 8.0, 2.5, 0.91, -55.0, 0.0, 90.0, 0.0, -55.0, 3*0.059, 3*0.059, 3*0.059, 3*0.059)]
 
-t = 0.059
+t = 0.059 * 2
 d_bottom = 0.91
 b_bottom = 2.5
 h = 8.0
@@ -46,19 +46,21 @@ Y = [cross_section[i][2] for i in eachindex(cross_section)]
 
 plot(X, Y, markershape = :o, aspect_ratio = :equal)
 
-#####
-#Get outside coords 
-coords_out = CrossSection.generate_open(L, θ, r, n, n_radius)
+
 #Get node normals on cross-section
-unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(coords_out)
+unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(cross_section)
 #Get centerline coords
-xcoords_center, ycoords_center = CrossSection.Tools.get_coords_along_node_normals(coords_out[:, 1], coords_out[:, 2], unit_node_normals, -t/2)
+centerline = CrossSection.Tools.get_coords_along_node_normals(cross_section, unit_node_normals, t/2)
 
-#Shift y coordinates so that the bottom purlin face is at y = 0.
-ycoords_center = ycoords_center .- minimum(ycoords_center) .+ t/2
 
-#Shift x coordinates so that the purlin web centerline is at x = 0.
-index = floor(Int, length(xcoords_center)/2)
-xcoords_center = xcoords_center .- xcoords_center[index]
+xcoords_center = [centerline[i][1] for i in eachindex(cross_section)]
+ycoords_center = [centerline[i][2] for i in eachindex(cross_section)]
 
-plot(xcoords_center, ycoords_center, markershape = :o, aspect_ratio=:equal)
+# #Shift y coordinates so that the bottom purlin face is at y = 0.
+# ycoords_center = ycoords_center .- minimum(ycoords_center) .+ t/2
+
+# #Shift x coordinates so that the purlin web centerline is at x = 0.
+# index = floor(Int, length(xcoords_center)/2)
+# xcoords_center = xcoords_center .- xcoords_center[index]
+
+plot!(xcoords_center, ycoords_center, markershape = :o, aspect_ratio=:equal)
