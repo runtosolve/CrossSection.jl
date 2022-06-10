@@ -4,6 +4,8 @@ export Tools
 include("Tools.jl")
 using .Tools
 
+export generate_thin_walled 
+
 function generate_thin_walled(L, θ, n)
 
     #anchor points
