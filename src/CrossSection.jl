@@ -20,7 +20,7 @@ function generate_thin_walled(L, θ, n)
     #round 
     for i in eachindex(flats)
     
-        flats[i] = [round.(flats[i][j], digits=5) for j in eachindex(flats)]
+        flats[i] = [round.(flats[i][j], digits=5) for j in eachindex(flats[i])]
     
     end
 

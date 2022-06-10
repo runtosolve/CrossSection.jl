@@ -29,7 +29,7 @@ out = cross_section[1:end-1] #trim last [0.0, 0.0] node for closed cross-section
 
 t = 0.2
 Δ = -t/2
-centerline = get_coords_along_node_normals(out, unit_node_normals[1:end-1], Δ)
+centerline = CrossSection.Tools.get_coords_along_node_normals(out, unit_node_normals[1:end-1], Δ)
 
 X = [centerline[i][1] for i in eachindex(centerline)]
 Y = [centerline[i][2] for i in eachindex(centerline)]
