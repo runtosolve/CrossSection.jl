@@ -95,6 +95,40 @@ function generate_thin_walled(L, θ, n, r, n_r)
 end
 
 
+function define_fluted_deck_cross_section(edge_width, flute_width, flute_web_length, flute_space, flute_web_angle, num_flutes)
+
+    unit_flute_L = [flute_web_length, flute_width, flute_web_length]
+
+    unit_flute_θ = [-flute_web_angle, 0.0, flute_web_angle]
+
+    L = []
+    θ = []
+    for i = 1:num_flutes
+
+        if i == 1
+
+            L = vcat(edge_width, unit_flute_L)
+            θ = vcat(0.0, unit_flute_θ)
+
+        elseif i == num_flutes
+
+            L = vcat(L, flute_space, unit_flute_L, edge_width)
+            θ = vcat(θ, 0.0, unit_flute_θ, 0.0)
+
+        else
+            L = vcat(L, flute_space, unit_flute_L)
+            θ = vcat(θ, 0.0, unit_flute_θ)
+
+        end
+
+    end
+
+    return L, θ
+
+end
+
+
+
 # """
 #     wshape_nodes(shape_info, n)
 
