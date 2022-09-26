@@ -1,4 +1,4 @@
-using CrossSection
+using CrossSection, Plots
 
 #generate a C-section joist
 #https://sfia.memberclicks.net/assets/TechFiles/SFIA%20Tech%20Spec%202022%20%20%202.7.22%20Final.pdf
@@ -16,8 +16,13 @@ L = [0.625, 2.0, 8.0, 2.0, 0.625] #in.
 r = [0.0849 + t, 0.0849 + t, 0.0849 + t, 0.0849 + t]
 
 #define cross-section discretization
-n = [2, 2, 2, 2, 2, 2, 2]
-n_r = [3, 3, 3, 3, 3, 3]
+n = [2, 2, 2, 2, 2]
+n_r = [3, 3, 3, 3]
 
 
 cross_section = CrossSection.generate_thin_walled(L, θ, n, r, n_r)
+
+X = [cross_section[i][1] for i in eachindex(cross_section)]
+Y = [cross_section[i][2] for i in eachindex(cross_section)]
+
+plot(X, Y, markershape=:o, aspect_ratio=:equal)

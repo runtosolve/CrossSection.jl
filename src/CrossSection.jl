@@ -127,7 +127,51 @@ function define_fluted_deck_cross_section(edge_width, flute_width, flute_web_len
 
 end
 
+function calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
+    cross_section = CrossSection.generate_thin_walled(L, θ, n, r, n_r)
+
+    unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(cross_section)
+    centerline = CrossSection.Tools.get_coords_along_node_normals(cross_section, unit_node_normals, -t/2)
+    X_c = [centerline[i][1] for i in eachindex(cross_section)]
+    Y_c = [centerline[i][2] for i in eachindex(cross_section)]
+
+    Y_c .+= -minimum(Y_c) + t/2
+
+    num_nodes = length(X_c)
+    num_elem = num_nodes - 1
+    coord = [X_c Y_c]
+    ends = [1:num_nodes-1 2:num_nodes ones(Float64, num_elem)*t]
+
+    section_properties = CUFSM.cutwp_prop2(coord,ends)
+
+    return coord, ends, section_properties
+
+end
+
+function calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
+
+    cross_section = CrossSection.generate_thin_walled(L, θ, n, r, n_r)
+
+    unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(cross_section)
+    centerline = CrossSection.Tools.get_coords_along_node_normals(cross_section, unit_node_normals, -t/2)
+    X_c = [centerline[i][1] for i in eachindex(cross_section)]
+    Y_c = [centerline[i][2] for i in eachindex(cross_section)]
+
+    Y_c .+= -minimum(Y_c) + t/2
+
+    num_nodes = length(X_c)
+    num_elem = num_nodes
+    coord = [X_c Y_c]
+    start_nodes = 1:num_nodes
+    end_nodes = [2:num_nodes; 1]
+    ends = [start_nodes end_nodes ones(Float64, num_elem)*t]
+
+    section_properties = CUFSM.cutwp_prop2(coord,ends)
+
+    return coord, ends, section_properties
+
+end
 
 # """
 #     wshape_nodes(shape_info, n)
