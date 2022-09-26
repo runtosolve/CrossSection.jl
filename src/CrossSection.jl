@@ -1,5 +1,7 @@
 module CrossSection
 
+using CUFSM
+
 export Tools
 include("Tools.jl")
 using .Tools

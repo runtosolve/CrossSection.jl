@@ -10,4 +10,5 @@ n_r = [3, 3, 3, 3]
 
 coord, ends, joist = CrossSection.calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
-joist.Ix
+#strong axis moment of inertia
+joist.Ixx
