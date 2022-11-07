@@ -9,7 +9,7 @@ r = [3*t, 3*t, 3*t, 3*t]
 n = [3, 3, 3, 3]
 n_r = [3, 3, 3, 3]
 
-coord, ends, post = CrossSection.calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
+post_geometry, post = CrossSection.calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
 #cross-sectional area
 post.A

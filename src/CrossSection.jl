@@ -145,9 +145,16 @@ function calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)
     coord = [X_c Y_c]
     ends = [1:num_nodes-1 2:num_nodes ones(Float64, num_elem)*t]
 
+
+	unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(centerline)
+	bottom = CrossSection.Tools.get_coords_along_node_normals(centerline, unit_node_normals, -t/2)
+	top = CrossSection.Tools.get_coords_along_node_normals(centerline, unit_node_normals, t/2)
+
+    section_geometry = (coord=coord, ends=ends, centerline=centerline, outside_face=top, inside_face=bottom)
+
     section_properties = CUFSM.cutwp_prop2(coord,ends)
 
-    return coord, ends, section_properties
+    return section_geometry, section_properties
 
 end
 
@@ -171,9 +178,16 @@ function calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
     end_nodes = [2:num_nodes; 1]
     ends = [start_nodes end_nodes ones(Float64, num_elem)*t]
 
+
+	unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(centerline)
+	bottom = CrossSection.Tools.get_coords_along_node_normals(centerline, unit_node_normals, -t/2)
+	top = CrossSection.Tools.get_coords_along_node_normals(centerline, unit_node_normals, t/2)
+
+    section_geometry = (coord=coord, ends=ends, centerline=centerline, outside_face=top, inside_face=bottom)
+
     section_properties = CUFSM.cutwp_prop2(coord,ends)
 
-    return coord, ends, section_properties
+    return section_geometry, section_properties
 
 end
 
