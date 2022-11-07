@@ -151,6 +151,8 @@ function calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
 end
 
+calculate_open_thin_walled_section_properties(;L, θ, r, n, n_r, t) = calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)
+
 function calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
     cross_section = CrossSection.generate_thin_walled(L, θ, n, r, n_r)
@@ -174,6 +176,8 @@ function calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
     return coord, ends, section_properties
 
 end
+
+calculate_closed_thin_walled_section_properties(;L, θ, r, n, n_r, t) = calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
 # """
 #     wshape_nodes(shape_info, n)
