@@ -6,6 +6,10 @@ export Tools
 include("Tools.jl")
 using .Tools
 
+export Viz
+include("Viz.jl")
+using .Viz
+
 export generate_thin_walled 
 
 function generate_thin_walled(L, θ, n)
