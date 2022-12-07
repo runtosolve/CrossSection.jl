@@ -22,7 +22,7 @@ function plot_closed_thin_walled_cross_section(geometry)
 	    lines!(ax, [[geometry.inside_face[i][1] for i in eachindex(geometry.inside_face)]; geometry.inside_face[1][1]], [[geometry.inside_face[i][2] for i in eachindex(geometry.inside_face)]; geometry.inside_face[1][2]], color=:gray)
 	    ax.autolimitaspect = 1
 	f
-end;
+end
 
 function plot_open_thin_walled_cross_section(geometry)
 	f = Figure()
@@ -33,7 +33,7 @@ function plot_open_thin_walled_cross_section(geometry)
 	    lines!(ax, [geometry.inside_face[i][1] for i in eachindex(geometry.inside_face)], [geometry.inside_face[i][2] for i in eachindex(geometry.inside_face)], color=:gray)
 	    ax.autolimitaspect = 1
 	f
-end;
+end
 
 
 end
