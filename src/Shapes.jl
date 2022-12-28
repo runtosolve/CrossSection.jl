@@ -16,7 +16,7 @@ function Z_section(L, θ, r, n, n_r, t)
     r[1] = r[1] - t
     r[2] = r[2] - t
 
-    section_geometry, section_properties = Properties.calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)
+    section_geometry, section_properties = Properties.open_thin_walled(L, θ, r, n, n_r, t)
 
     return section_geometry, section_properties
 
