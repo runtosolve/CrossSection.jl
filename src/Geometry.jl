@@ -1,7 +1,7 @@
 module Geometry 
 
 
-using LinesCurvesNodes, LinearAlgebra, StaticArrays, LazySets
+using LinesCurvesNodes, LinearAlgebra, StaticArrays, LazySets, Statistics
 
 
 function generate_thin_walled(L, θ, n)
