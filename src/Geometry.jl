@@ -1,7 +1,7 @@
 module Geometry 
 
 
-using LinesCurvesNodes, LinearAlgebra, StaticArrays, LazySets, Statistics
+using LinesCurvesNodes, LinearAlgebra, StaticArrays, LazySets, Statistics, Unitful
 
 
 function generate_thin_walled(L, θ, n)
@@ -104,7 +104,7 @@ function lay_out_cross_section_nodes(L, θ)
 
         if i == 1
 
-            start_node = [0.0, 0.0]
+            start_node = [0.0*unit(L[1]), 0.0*unit(L[1])]
 
         else
 
