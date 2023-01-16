@@ -39,8 +39,8 @@ uuid = "4e9b3aee-d8a1-5a3d-ad8b-7d824db253f0"
 version = "1.0.1+0"
 
 [[deps.CUFSM]]
-deps = ["LinearAlgebra", "SparseArrays", "Statistics"]
-git-tree-sha1 = "8e212ffe92442f7cc9acf37b2983384ba479df91"
+deps = ["LinearAlgebra", "SparseArrays", "Statistics", "Unitful"]
+git-tree-sha1 = "ff80dcd906c76eb1888578ecce333cac54ac0e10"
 repo-rev = "main"
 repo-url = "https://github.com/runtosolve/CUFSM.jl.git"
 uuid = "82b4978f-06ae-48e0-88e8-a26b4f7a0fa1"
@@ -207,9 +207,9 @@ version = "0.21.3"
 
 [[deps.JuMP]]
 deps = ["LinearAlgebra", "MathOptInterface", "MutableArithmetics", "OrderedCollections", "Printf", "SparseArrays"]
-git-tree-sha1 = "97792e3d04971c41fdc4917e1ae9bf6d313599e3"
+git-tree-sha1 = "821341783388cd26bbb9bab4ad9d0992e78259a4"
 uuid = "4076af6c-e467-56ae-b986-b466b2749572"
-version = "1.5.0"
+version = "1.6.0"
 
 [[deps.LazySets]]
 deps = ["Distributed", "GLPK", "IntervalArithmetic", "JuMP", "LinearAlgebra", "Random", "ReachabilityBase", "RecipesBase", "Reexport", "Requires", "SharedArrays", "SparseArrays", "StaticArraysCore"]
@@ -244,8 +244,8 @@ deps = ["Libdl", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LinesCurvesNodes]]
-deps = ["LinearAlgebra", "Rotations"]
-git-tree-sha1 = "443ebd4daa1b8a1600c484fe45a58c83e3809da8"
+deps = ["LinearAlgebra", "Rotations", "Unitful"]
+git-tree-sha1 = "177005b18647e1878febdf707c763f53514358a8"
 repo-rev = "main"
 repo-url = "https://github.com/runtosolve/LinesCurvesNodes.jl.git"
 uuid = "74a74c3a-221d-4cd1-a4eb-c3c8149e7592"
@@ -272,9 +272,9 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[deps.MathOptInterface]]
 deps = ["BenchmarkTools", "CodecBzip2", "CodecZlib", "DataStructures", "ForwardDiff", "JSON", "LinearAlgebra", "MutableArithmetics", "NaNMath", "OrderedCollections", "Printf", "SparseArrays", "SpecialFunctions", "Test", "Unicode"]
-git-tree-sha1 = "09c6964bf4bca818867494739a9387c0c9cf4e2c"
+git-tree-sha1 = "baa31c7b235492d9a6f2cb31bb533d74345b0614"
 uuid = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
-version = "1.11.0"
+version = "1.11.4"
 
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -327,9 +327,9 @@ version = "1.4.1"
 
 [[deps.Parsers]]
 deps = ["Dates", "SnoopPrecompile"]
-git-tree-sha1 = "6466e524967496866901a78fca3f2e9ea445a559"
+git-tree-sha1 = "8175fc2b118a3755113c8e68084dc1a9e63c61ee"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.5.2"
+version = "2.5.3"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -351,10 +351,10 @@ deps = ["Printf"]
 uuid = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
 
 [[deps.Quaternions]]
-deps = ["LinearAlgebra", "Random"]
-git-tree-sha1 = "fcebf40de9a04c58da5073ec09c1c1e95944c79b"
+deps = ["LinearAlgebra", "Random", "RealDot"]
+git-tree-sha1 = "da095158bdc8eaccb7890f9884048555ab771019"
 uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
-version = "0.6.1"
+version = "0.7.4"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -370,11 +370,17 @@ git-tree-sha1 = "048fc23bb2392018c735e3d6d43c4dd8e5cb2f23"
 uuid = "379f33d0-9447-4353-bd03-d664070e549f"
 version = "0.1.5"
 
+[[deps.RealDot]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "9f0a1b71baaf7650f4fa8a1d168c7fb6ee41f0c9"
+uuid = "c1ae055f-0cd5-4b69-90a6-9a35b1a98df9"
+version = "0.1.0"
+
 [[deps.RecipesBase]]
 deps = ["SnoopPrecompile"]
-git-tree-sha1 = "18c35ed630d7229c5584b945641a73ca83fb5213"
+git-tree-sha1 = "261dddd3b862bd2c940cf6ca4d1c8fe593e457c8"
 uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
-version = "1.3.2"
+version = "1.3.3"
 
 [[deps.Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
@@ -389,9 +395,9 @@ version = "1.3.0"
 
 [[deps.Rotations]]
 deps = ["LinearAlgebra", "Quaternions", "Random", "StaticArrays", "Statistics"]
-git-tree-sha1 = "793b6ef92f9e96167ddbbd2d9685009e200eb84f"
+git-tree-sha1 = "9480500060044fd25a1c341da53f34df7443c2f2"
 uuid = "6038ab10-8711-5258-84ad-4b1120ba62dc"
-version = "1.3.3"
+version = "1.3.4"
 
 [[deps.RoundingEmulator]]
 git-tree-sha1 = "40b9edad2e5287e05bd413a38f61a8ff55b9557b"
@@ -415,9 +421,10 @@ deps = ["Distributed", "Mmap", "Random", "Serialization"]
 uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[deps.SnoopPrecompile]]
-git-tree-sha1 = "f604441450a3c0569830946e5b33b78c928e1a85"
+deps = ["Preferences"]
+git-tree-sha1 = "e760a70afdcd461cf01a575947738d359234665c"
 uuid = "66db9d55-30c0-4569-8b51-7e840670fc0c"
-version = "1.0.1"
+version = "1.0.3"
 
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
@@ -434,9 +441,9 @@ version = "2.1.7"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "ffc098086f35909741f71ce21d03dadf0d2bfa76"
+git-tree-sha1 = "6954a456979f23d05085727adb17c4551c19ecd1"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.5.11"
+version = "1.5.12"
 
 [[deps.StaticArraysCore]]
 git-tree-sha1 = "6b7ba252635a5eff6a0b0664a41ee140a1c9e72a"
@@ -463,9 +470,9 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]
-git-tree-sha1 = "e4bdc63f5c6d62e80eb1c0043fcc0360d5950ff7"
+git-tree-sha1 = "94f38103c984f89cf77c402f2a68dbd870f8165f"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.9.10"
+version = "0.9.11"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]

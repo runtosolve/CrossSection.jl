@@ -80,7 +80,7 @@ function generate_thin_walled(L, θ, n, r, n_r)
 
     for i in eachindex(cross_section)
 
-        cross_section[i] = round.(cross_section[i], digits=5)
+        cross_section[i] = round.(unit(cross_section[i][1]), cross_section[i], digits=5)
 
         cross_section[i] = Geometry.remove_negative_zeros(cross_section[i])
 
@@ -98,7 +98,8 @@ function lay_out_cross_section_nodes(L, θ)
 
     num_segments = length(L)
 
-    cross_section = Array{Vector{Float64}}(undef, num_segments)
+    # cross_section = Array{Vector{Float64}}(undef, num_segments)
+    cross_section = []
 
     for i in eachindex(L)
 
@@ -112,13 +113,13 @@ function lay_out_cross_section_nodes(L, θ)
 
         end
 
-        cross_section[i] = round.(LinesCurvesNodes.transform_vector(L[i], start_node, θ[i]), digits=5)
+        cross_section = [cross_section; [round.(unit(L[i]), LinesCurvesNodes.transform_vector(L[i], start_node, θ[i]), digits=5)]]
 
         cross_section[i] = remove_negative_zeros(cross_section[i])
 
     end
 
-    cross_section = [[[0.0, 0.0]]; cross_section] #add start node at unity
+    cross_section = [[[0.0*unit(L[1]), 0.0*unit(L[1])]]; cross_section] #add start node at unity
 
     return cross_section
 
@@ -128,7 +129,8 @@ end
 
 function generate_cross_section_rounded_corners(cross_section_nodes, r, n)
 
-    corners = Array{Array{Vector{Float64}}}(undef, length(r))
+    # corners = Array{Array{Vector{Float64}}}(undef, length(r))
+    corners = Array{Array{Vector{Any}}}(undef, length(r))
 
     for i in eachindex(r)
 
@@ -158,7 +160,7 @@ end
 
 function generate_straight_line_segments(cross_section_nodes, corners, n)
 
-    segments = Array{Vector{Vector{Float64}}}(undef, length(n))
+    segments = Array{Vector{Vector{Any}}}(undef, length(n))
 
     if corners == []
 
@@ -255,6 +257,9 @@ function calculate_cross_section_unit_node_normals(cross_section)
     num_nodes = size(cross_section)[1]
     unit_node_normals = Array{Vector{Float64}}(undef, num_nodes)
 
+    cross_section = [ustrip.(cross_section[i]) for i in eachindex(cross_section)]
+
+
     for i=1:num_nodes
 
         if i == 1
@@ -336,6 +341,7 @@ function calculate_cross_section_unit_node_normals(cross_section)
 
     end
 
+
     return unit_node_normals
 
 end
@@ -343,7 +349,7 @@ end
 
 function get_coords_along_node_normals(cross_section, unit_node_normals, Δ)
 
-    normal_cross_section = Array{Vector{Float64}}(undef, 0)
+    normal_cross_section = Array{Vector{Any}}(undef, 0)
 
     for i in eachindex(cross_section)
 
@@ -358,10 +364,10 @@ end
 
 function right_halfspace_normal_correction(A, B, normal) 
 
-    s = LineSegment(A, B)
-    hs = halfspace_right(s) #for counterclockwise node layout, right is outside
+    s = LineSegment(ustrip.(A), ustrip.(B))
+    hs = halfspace_right(s) 
     dA = A + 1.0 * normal
-    if !∈(dA, hs)  #is the node normal pointing outside or inside, if it is pointing inside, reverse sign to make it point outside
+    if !∈(dA, hs)  #is the node normal pointing left or right, if it is pointing left, reverse sign to make it point right
         normal = -normal
     end
 
@@ -372,15 +378,17 @@ end
 
 function remove_negative_zeros(coord)
 
-    if coord[1] === -0.0
 
-        coord[1] = 0.0
+
+    if coord[1] === -0.0*unit(coord[1])
+
+        coord[1] = 0.0*unit(coord[1])
 
     end
 
-    if coord[2] === -0.0
+    if coord[2] === -0.0*unit(coord[2])
 
-        coord[2] = 0.0
+        coord[2] = 0.0*unit(coord[2])
 
     end
 

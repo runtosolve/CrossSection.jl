@@ -12,7 +12,7 @@ struct PlasticSectionProperties
 end
 
 
-function open_thin_walled(L, θ, r, n, n_r, t)
+function open_thin_walled(L, θ, r, n, n_r, t; centerline)
 
     #bring in top projection
     cross_section = Geometry.generate_thin_walled(L, θ, n, r, n_r)
@@ -20,10 +20,18 @@ function open_thin_walled(L, θ, r, n, n_r, t)
     #calculate surface normals
     unit_node_normals = Geometry.calculate_cross_section_unit_node_normals(cross_section)
 
+    if centerline == "to left"
+        increment = -t/2
+    elseif centerline == "to right"
+        increment = t/2
+    elseif centerline == "at center"
+        increment = 0.0
+    end
+
     #calculate centerline geometry
-    centerline = Geometry.get_coords_along_node_normals(cross_section, unit_node_normals, t/2)
-    X_c = [centerline[i][1] for i in eachindex(cross_section)]
-    Y_c = [centerline[i][2] for i in eachindex(cross_section)]
+    center = Geometry.get_coords_along_node_normals(cross_section, unit_node_normals, increment)
+    X_c = [center[i][1] for i in eachindex(cross_section)]
+    Y_c = [center[i][2] for i in eachindex(cross_section)]
 
     # Y_c .+= -minimum(Y_c) + t/2
 
@@ -34,11 +42,11 @@ function open_thin_walled(L, θ, r, n, n_r, t)
     ends = [1:num_nodes-1 2:num_nodes ones(Float64, num_elem)*t]
 
 	#calculate top and bottom surface projections
-	bottom = Geometry.get_coords_along_node_normals(centerline, unit_node_normals, -t/2)
-	top = Geometry.get_coords_along_node_normals(centerline, unit_node_normals, t/2)
+	left = Geometry.get_coords_along_node_normals(center, unit_node_normals, -t/2)
+	right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
 
     #collection up all the section info
-    section_geometry = (coord=coord, ends=ends, centerline=centerline, top=top, bottom=bottom)
+    section_geometry = (coord=coord, ends=ends, center=center, left=left, right=right)
 
     #calculate section properties
     section_properties = CUFSM.cutwp_prop2(coord,ends)
@@ -48,7 +56,7 @@ function open_thin_walled(L, θ, r, n, n_r, t)
 end
 
 
-calculate_open_thin_walled_section_properties(;L, θ, r, n, n_r, t) = calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)
+# calculate_open_thin_walled_section_properties(;L, θ, r, n, n_r, t) = calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
 function calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
