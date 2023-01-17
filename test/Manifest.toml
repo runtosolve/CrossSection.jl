@@ -1,6 +1,6 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.4"
+julia_version = "1.8.5"
 manifest_format = "2.0"
 project_hash = "be9640b49d15687ffc8a547bc8165d0a9ee62449"
 
@@ -98,7 +98,7 @@ uuid = "82b4978f-06ae-48e0-88e8-a26b4f7a0fa1"
 version = "0.1.0"
 
 [[deps.Cairo_jll]]
-deps = ["Artifacts", "Bzip2_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
+deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
 git-tree-sha1 = "4b859a208b2397a7a623a03449e4636bdb17bcf2"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+1"
@@ -198,10 +198,8 @@ uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
 
 [[deps.CrossSection]]
-deps = ["CUFSM", "LazySets", "LinearAlgebra", "LinesCurvesNodes", "StaticArrays"]
-git-tree-sha1 = "5d2a23e9bf8b8f8bf9a505014a2e68cadc7a9875"
-repo-rev = "main"
-repo-url = "/Users/crismoen/.julia/dev/CrossSection"
+deps = ["CUFSM", "LazySets", "LinearAlgebra", "LinesCurvesNodes", "StaticArrays", "Statistics", "Unitful"]
+path = "/Users/crismoen/.julia/dev/CrossSection"
 uuid = "a0443d1a-7a62-4d3d-b993-57eb2183b07a"
 version = "0.1.0"
 
@@ -671,9 +669,9 @@ version = "2.1.2+0"
 
 [[deps.JuMP]]
 deps = ["LinearAlgebra", "MathOptInterface", "MutableArithmetics", "OrderedCollections", "Printf", "SparseArrays"]
-git-tree-sha1 = "97792e3d04971c41fdc4917e1ae9bf6d313599e3"
+git-tree-sha1 = "821341783388cd26bbb9bab4ad9d0992e78259a4"
 uuid = "4076af6c-e467-56ae-b986-b466b2749572"
-version = "1.5.0"
+version = "1.6.0"
 
 [[deps.KernelDensity]]
 deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]
@@ -872,9 +870,9 @@ version = "1.2.0"
 
 [[deps.MathOptInterface]]
 deps = ["BenchmarkTools", "CodecBzip2", "CodecZlib", "DataStructures", "ForwardDiff", "JSON", "LinearAlgebra", "MutableArithmetics", "NaNMath", "OrderedCollections", "Printf", "SparseArrays", "SpecialFunctions", "Test", "Unicode"]
-git-tree-sha1 = "34bc4ea9d1b1ee5da976bc88e5546df98872c56f"
+git-tree-sha1 = "baa31c7b235492d9a6f2cb31bb533d74345b0614"
 uuid = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
-version = "1.11.1"
+version = "1.11.4"
 
 [[deps.MathTeXEngine]]
 deps = ["AbstractTrees", "Automa", "DataStructures", "FreeTypeAbstraction", "GeometryBasics", "LaTeXStrings", "REPL", "RelocatableFolders", "Test", "UnicodeFun"]

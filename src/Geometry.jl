@@ -80,7 +80,11 @@ function generate_thin_walled(L, θ, n, r, n_r)
 
     for i in eachindex(cross_section)
 
-        cross_section[i] = round.(unit(cross_section[i][1]), cross_section[i], digits=5)
+        if typeof(unit(L[1])) == Unitful.FreeUnits{(), NoDims, nothing}
+            cross_section[i] = round.(cross_section[i], digits=5)
+        else
+            cross_section[i] = round.(unit(cross_section[i][1]), cross_section[i], digits=5)
+        end
 
         cross_section[i] = Geometry.remove_negative_zeros(cross_section[i])
 
@@ -113,7 +117,11 @@ function lay_out_cross_section_nodes(L, θ)
 
         end
 
-        cross_section = [cross_section; [round.(unit(L[i]), LinesCurvesNodes.transform_vector(L[i], start_node, θ[i]), digits=5)]]
+        if typeof(unit(L[1])) == Unitful.FreeUnits{(), NoDims, nothing}
+            cross_section = [cross_section; [round.(LinesCurvesNodes.transform_vector(L[i], start_node, θ[i]), digits=5)]]
+        else
+            cross_section = [cross_section; [round.(unit(L[i]), LinesCurvesNodes.transform_vector(L[i], start_node, θ[i]), digits=5)]]
+        end
 
         cross_section[i] = remove_negative_zeros(cross_section[i])
 
