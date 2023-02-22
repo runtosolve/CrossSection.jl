@@ -20,7 +20,7 @@ r = [0.18+t, 0.18+t, 0.18+t, 0.18+t]
 n = [3, 3, 3, 3, 3]
 n_r = [3, 3, 3, 3]
 
-geometry, joist = Properties.open_thin_walled(L, θ, r, n, n_r, t)
+geometry, joist = Properties.open_thin_walled(L, θ, r, n, n_r, t, centerline="to left")
 
 plot_open_thin_walled_cross_section(geometry)
 

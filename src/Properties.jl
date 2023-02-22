@@ -45,6 +45,13 @@ function open_thin_walled(L, θ, r, n, n_r, t; centerline)
 	left = Geometry.get_coords_along_node_normals(center, unit_node_normals, -t/2)
 	right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
 
+    #convert geometry to tuples, mainly for plotting convenience 
+    convert_to_tuple(data) = [(data[i][1], data[i][2]) for i in eachindex(data)]
+    left = convert_to_tuple(left)
+    right = convert_to_tuple(right)
+    center = convert_to_tuple(center)
+
+
     #collection up all the section info
     section_geometry = (coord=coord, ends=ends, center=center, left=left, right=right)
 
