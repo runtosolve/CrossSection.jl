@@ -12,28 +12,61 @@ struct PlasticSectionProperties
 end
 
 
-function open_thin_walled(L, θ, r, n, n_r, t; centerline)
+# function open_thin_walled(L, θ, r, n, n_r, t; centerline)
 
-    #bring in top projection
-    cross_section = Geometry.generate_thin_walled(L, θ, n, r, n_r)
+#     #bring in top projection
+#     cross_section = Geometry.generate_thin_walled(L, θ, n, r, n_r)
 
-    #calculate surface normals
-    unit_node_normals = Geometry.calculate_cross_section_unit_node_normals(cross_section)
+#     #calculate surface normals
+#     unit_node_normals = Geometry.calculate_cross_section_unit_node_normals(cross_section)
 
-    if centerline == "to left"
-        increment = -t/2
-    elseif centerline == "to right"
-        increment = t/2
-    elseif centerline == "at center"
-        increment = 0.0
-    end
+#     if centerline == "to left"
+#         increment = -t/2
+#     elseif centerline == "to right"
+#         increment = t/2
+#     elseif centerline == "at center"
+#         increment = 0.0
+#     end
 
-    #calculate centerline geometry
-    center = Geometry.get_coords_along_node_normals(cross_section, unit_node_normals, increment)
-    X_c = [center[i][1] for i in eachindex(cross_section)]
-    Y_c = [center[i][2] for i in eachindex(cross_section)]
+#     #calculate centerline geometry
+#     center = Geometry.get_coords_along_node_normals(cross_section, unit_node_normals, increment)
+#     X_c = [center[i][1] for i in eachindex(cross_section)]
+#     Y_c = [center[i][2] for i in eachindex(cross_section)]
 
-    # Y_c .+= -minimum(Y_c) + t/2
+#     # Y_c .+= -minimum(Y_c) + t/2
+
+#     #define elements for section property calc
+#     num_nodes = length(X_c)
+#     num_elem = num_nodes - 1
+#     coord = [X_c Y_c]
+#     ends = [1:num_nodes-1 2:num_nodes ones(Float64, num_elem)*t]
+
+# 	#calculate top and bottom surface projections
+# 	left = Geometry.get_coords_along_node_normals(center, unit_node_normals, -t/2)
+# 	right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
+
+#     #convert geometry to tuples, mainly for plotting convenience 
+#     convert_to_tuple(data) = [(data[i][1], data[i][2]) for i in eachindex(data)]
+#     left = convert_to_tuple(left)
+#     right = convert_to_tuple(right)
+#     center = convert_to_tuple(center)
+
+
+#     #collection up all the section info
+#     section_geometry = (coord=coord, ends=ends, center=center, left=left, right=right)
+
+#     #calculate section properties
+#     section_properties = CUFSM.cutwp_prop2(coord,ends)
+
+#     return section_geometry, section_properties
+
+# end
+
+
+function open_thin_walled(center, t)
+
+    X_c = [center[i][1] for i in eachindex(center)]
+    Y_c = [center[i][2] for i in eachindex(center)]
 
     #define elements for section property calc
     num_nodes = length(X_c)
@@ -41,26 +74,13 @@ function open_thin_walled(L, θ, r, n, n_r, t; centerline)
     coord = [X_c Y_c]
     ends = [1:num_nodes-1 2:num_nodes ones(Float64, num_elem)*t]
 
-	#calculate top and bottom surface projections
-	left = Geometry.get_coords_along_node_normals(center, unit_node_normals, -t/2)
-	right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
-
-    #convert geometry to tuples, mainly for plotting convenience 
-    convert_to_tuple(data) = [(data[i][1], data[i][2]) for i in eachindex(data)]
-    left = convert_to_tuple(left)
-    right = convert_to_tuple(right)
-    center = convert_to_tuple(center)
-
-
-    #collection up all the section info
-    section_geometry = (coord=coord, ends=ends, center=center, left=left, right=right)
-
     #calculate section properties
     section_properties = CUFSM.cutwp_prop2(coord,ends)
 
-    return section_geometry, section_properties
+    return section_properties
 
 end
+
 
 
 # calculate_open_thin_walled_section_properties(;L, θ, r, n, n_r, t) = calculate_open_thin_walled_section_properties(L, θ, r, n, n_r, t)

@@ -454,6 +454,40 @@ function calculate_axis_area(element_connectivity, element_thicknesses, node_geo
 
 end
 
+function create_thin_walled_open_cross_section_geometry(L, θ, n, r, n_r, t; centerline, offset)
+
+    #bring in surface
+    cross_section = Geometry.generate_thin_walled(L, θ, n, r, n_r)
+
+    #calculate surface normals
+    unit_node_normals = Geometry.calculate_cross_section_unit_node_normals(cross_section)
+
+    #following along surface, is centerline to right or left?
+    if centerline == "to left"
+        increment = -t/2
+    elseif centerline == "to right"
+        increment = t/2
+    elseif centerline == "at center"
+        increment = 0.0
+    end
+
+    #calculate centerline geometry, surfaces
+    center = Geometry.get_coords_along_node_normals(cross_section, unit_node_normals, increment)
+    left = Geometry.get_coords_along_node_normals(center, unit_node_normals, -t/2)
+    right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
+
+    #convert geometry to tuples, offset coordinates provided by users
+    convert_to_tuple(data) = [(data[i][1] + offset[1], data[i][2] + offset[2]) for i in eachindex(data)]
+    left = convert_to_tuple(left)
+    right = convert_to_tuple(right)
+    center = convert_to_tuple(center)
+
+    #collection up all the section info
+    section_geometry = (center=center, left=left, right=right)
+
+    return section_geometry
+
+end
 
 
 
