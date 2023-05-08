@@ -12,5 +12,8 @@ export Shapes
 include("Shapes.jl")
 using .Shapes
 
+export Show
+include("Show.jl")
+using .Show
 
 end # module
