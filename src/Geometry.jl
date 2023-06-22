@@ -7,11 +7,11 @@ using LinesCurvesNodes, LinearAlgebra, StaticArrays, LazySets, Statistics
 function generate_thin_walled(L, θ, n)
 
     #anchor points
-    cross_section_nodes = Tools.lay_out_cross_section_nodes(L, θ)
+    cross_section_nodes = lay_out_cross_section_nodes(L, θ)
 
     #no corners in this method
     corners = []
-    flats = Tools.generate_straight_line_segments(cross_section_nodes, corners, n)
+    flats = generate_straight_line_segments(cross_section_nodes, corners, n)
     
     cross_section = Array{Vector{Float64}}(undef, 0)
     
