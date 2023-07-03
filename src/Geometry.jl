@@ -490,51 +490,40 @@ function create_thin_walled_cross_section_geometry(L, θ, n, r, n_r, t; centerli
 end
 
 
+function create_thin_walled_cross_section_geometry(L, θ, n, t; centerline, offset)
 
-# function create_closed_thin_walled_section_geometry(L, θ, r, n, n_r, t; centerline, offset)
+    #bring in surface
+    cross_section = Geometry.generate_thin_walled(L, θ, n)
 
-#     cross_section = CrossSection.generate_thin_walled(L, θ, n, r, n_r)
+    #calculate surface normals
+    unit_node_normals = Geometry.calculate_cross_section_unit_node_normals(cross_section)
 
-#     unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(cross_section)
-    
-#     #following along surface, is centerline to right or left?
-#     if centerline == "to left"
-#         increment = -t/2
-#     elseif centerline == "to right"
-#         increment = t/2
-#     elseif centerline == "at center"
-#         increment = 0.0
-#     end
-    
-#     center = Geometry.get_coords_along_node_normals(cross_section, unit_node_normals, increment)
-#     left = Geometry.get_coords_along_node_normals(center, unit_node_normals, -t/2)
-#     right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
-    
-#     centerline = CrossSection.Tools.get_coords_along_node_normals(cross_section, unit_node_normals, -t/2)
-#     X_c = [centerline[i][1] for i in eachindex(cross_section)]
-#     Y_c = [centerline[i][2] for i in eachindex(cross_section)]
+    #following along surface, is centerline to right or left?
+    if centerline == "to left"
+        increment = -t/2
+    elseif centerline == "to right"
+        increment = t/2
+    elseif centerline == "at center"
+        increment = 0.0
+    end
 
-#     Y_c .+= -minimum(Y_c) + t/2
+    #calculate centerline geometry, surfaces
+    center = Geometry.get_coords_along_node_normals(cross_section, unit_node_normals, increment)
+    left = Geometry.get_coords_along_node_normals(center, unit_node_normals, -t/2)
+    right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
 
-#     num_nodes = length(X_c)
-#     num_elem = num_nodes
-#     coord = [X_c Y_c]
-#     start_nodes = 1:num_nodes
-#     end_nodes = [2:num_nodes; 1]
-#     ends = [start_nodes end_nodes ones(Float64, num_elem)*t]
+    #convert geometry to tuples, offset coordinates provided by users
+    convert_to_tuple(data) = [(data[i][1] + offset[1], data[i][2] + offset[2]) for i in eachindex(data)]
+    left = convert_to_tuple(left)
+    right = convert_to_tuple(right)
+    center = convert_to_tuple(center)
 
+    #collection up all the section info
+    section_geometry = (center=center, left=left, right=right)
 
-# 	unit_node_normals = CrossSection.Tools.calculate_cross_section_unit_node_normals(centerline)
-# 	bottom = CrossSection.Tools.get_coords_along_node_normals(centerline, unit_node_normals, -t/2)
-# 	top = CrossSection.Tools.get_coords_along_node_normals(centerline, unit_node_normals, t/2)
+    return section_geometry
 
-#     section_geometry = (coord=coord, ends=ends, centerline=centerline, outside_face=top, inside_face=bottom)
-
-#     section_properties = CUFSM.cutwp_prop2(coord,ends)
-
-#     return section_geometry, section_properties
-
-# end
+end
 
 
 
