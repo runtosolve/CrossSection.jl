@@ -91,6 +91,30 @@ function closed_thin_walled_section(x, y, t, drawing_scale, linecolor, markersiz
 
 end
 
+function closed_thin_walled_section(x, y, t, drawing_scale, linecolor, markersize, limits, aspect_ratio, figure = Figure())
+
+    # x = [geometry.center[i][1] for i in eachindex(geometry.center)]
+    # y = [geometry.center[i][2] for i in eachindex(geometry.center)]
+
+	# x = [x; x[1]]
+	# y = [y; y[1]]
+
+    Δx = abs(maximum(x) - minimum(x))
+    Δy = abs(maximum(y) - minimum(y))
+
+    # figure = Figure(resolution = (Δx*72, Δy*72) .* drawing_scale)
+    # ax = Axis(figure[1, 1], aspect = Δx/Δy, limits = limits)
+    ax = Axis(figure[1, 1], aspect = aspect_ratio, limits = limits)
+    thickness_scale = maximum(t) * 72 * drawing_scale
+    num_elem = length(x)-1
+    linewidths = t ./ maximum(t) * thickness_scale
+    [scatterlines!(ax, x[i:i+1], y[i:i+1], linewidth=linewidths[i], color=linecolor, markersize=markersize) for i=1:num_elem];
+
+    figure
+
+    # return ax, figure
+
+end
 
 
 

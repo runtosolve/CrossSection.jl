@@ -102,7 +102,7 @@ function closed_thin_walled(center, t)
 
 end
 
-calculate_closed_thin_walled_section_properties(;L, θ, r, n, n_r, t) = calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
+# calculate_closed_thin_walled_section_properties(;L, θ, r, n, n_r, t) = calculate_closed_thin_walled_section_properties(L, θ, r, n, n_r, t)
 
 
 
@@ -209,6 +209,23 @@ function calculate_plastic_section_properties(node_geometry, element_definitions
 
 end
 
+function circular_tube(outside_diameter, t, num_radial_segments)
+
+    r = outside_diameter/2
+    α = range(0.0, 2π, num_radial_segments)[1:end-1]
+    x = (r - t/2) * sin.(α)  
+    y = (r - t/2) * cos.(α) 
+
+    y = y .- minimum(y) .+ t/2
+    x = x .- minimum(x) .+ t/2
+
+    center = [[x[i], y[i]] for i in eachindex(x)]
+
+    properties = closed_thin_walled(center, ones(Float64, length(x)) .* t)
+
+    return properties
+
+end
 
 
 end #module
