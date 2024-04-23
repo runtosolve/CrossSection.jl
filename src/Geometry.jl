@@ -477,10 +477,15 @@ function create_thin_walled_cross_section_geometry(L, θ, n, r, n_r, t; centerli
     right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
 
     #convert geometry to tuples, offset coordinates provided by users
-    convert_to_tuple(data) = [(data[i][1] + offset[1], data[i][2] + offset[2]) for i in eachindex(data)]
-    left = convert_to_tuple(left)
-    right = convert_to_tuple(right)
-    center = convert_to_tuple(center)
+    # convert_to_tuple(data) = [(data[i][1] + offset[1], data[i][2] + offset[2]) for i in eachindex(data)]
+    # left = convert_to_tuple(left)
+    # right = convert_to_tuple(right)
+    # center = convert_to_tuple(center)
+
+    convert_to_vectors(data) = [[data[i][1] + offset[1], data[i][2] + offset[2]] for i in eachindex(data)]
+    left = convert_to_vectors(left)
+    right = convert_to_vectors(right)
+    center = convert_to_vectors(center)
 
     #collection up all the section info
     section_geometry = (center=center, left=left, right=right)
@@ -513,10 +518,15 @@ function create_thin_walled_cross_section_geometry(L, θ, n, t; centerline, offs
     right = Geometry.get_coords_along_node_normals(center, unit_node_normals, t/2)
 
     #convert geometry to tuples, offset coordinates provided by users
-    convert_to_tuple(data) = [(data[i][1] + offset[1], data[i][2] + offset[2]) for i in eachindex(data)]
-    left = convert_to_tuple(left)
-    right = convert_to_tuple(right)
-    center = convert_to_tuple(center)
+    # convert_to_tuple(data) = [(data[i][1] + offset[1], data[i][2] + offset[2]) for i in eachindex(data)]
+    # left = convert_to_tuple(left)
+    # right = convert_to_tuple(right)
+    # center = convert_to_tuple(center)
+
+    convert_to_vectors(data) = [[data[i][1] + offset[1], data[i][2] + offset[2]] for i in eachindex(data)]
+    left = convert_to_vectors(left)
+    right = convert_to_vectors(right)
+    center = convert_to_vectors(center)
 
     #collection up all the section info
     section_geometry = (center=center, left=left, right=right)
