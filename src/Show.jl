@@ -1,6 +1,6 @@
 module Show
 
-using CairoMakie
+using CairoMakie, LinesCurvesNodes
 
 function open_thin_walled_section(geometry, t, drawing_scale, linecolor, markersize)
 
@@ -116,6 +116,45 @@ function closed_thin_walled_section(x, y, t, drawing_scale, linecolor, markersiz
 
 end
 
+
+#used in RackSectionsAPI
+function section(x, y, t, drawing_scale, linecolor)
+
+    linesegment_ranges, t_segments = LinesCurvesNodes.find_linesegments(t)
+    coords_as_linesegments = LinesCurvesNodes.combine_points_into_linesegments(linesegment_ranges, x, y)
+
+
+    #out to out range of cross-section
+    ΔX = abs(maximum(x) - minimum(x)) + maximum(t)
+    ΔY = abs(maximum(y) - minimum(y)) + maximum(t)
+
+    figure = Figure(size = (ΔX , ΔY) .* 72 .* drawing_scale)
+    ax = Axis(figure[1, 1])
+    thickness_scale = maximum(t) * 72 * drawing_scale
+
+    for i in eachindex(coords_as_linesegments)
+    
+        linewidth = t_segments[i] ./ maximum(t) * thickness_scale
+
+        x_segment = [coords_as_linesegments[i][j][1] for j in eachindex(coords_as_linesegments[i])]
+        y_segment = [coords_as_linesegments[i][j][2] for j in eachindex(coords_as_linesegments[i])]
+
+        # print(x_segment)
+        if length(x) == length(t)  #closed section
+
+            lines!(ax, [x_segment; x_segment[1]], [y_segment; y_segment[1]], linewidth = linewidth, color = linecolor)
+
+        else #open section 
+
+            lines!(ax, x_segment, y_segment, linewidth = linewidth, color = linecolor)
+
+        end
+
+    end
+
+    return figure
+
+end
 
 
 
