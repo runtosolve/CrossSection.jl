@@ -2,6 +2,22 @@ module Show
 
 using CairoMakie, LinesCurvesNodes
 
+
+struct SectionOptions
+
+    drawing_size::Vector{Float64}
+    thickness_scale::Float64
+    backgroundcolor::Symbol
+    linecolor::Symbol
+    joinstyle::Symbol
+    linecap::Symbol
+    hidedecorations::Bool
+    hidespines::Bool
+
+end
+
+
+
 function open_thin_walled_section(geometry, t, drawing_scale, linecolor, markersize)
 
     x = [geometry.center[i][1] for i in eachindex(geometry.center)]
@@ -118,35 +134,41 @@ end
 
 
 #used in RackSectionsAPI
-function section(x, y, t, drawing_scale, linecolor)
+function section(x, y, t, options)
 
     linesegment_ranges, t_segments = LinesCurvesNodes.find_linesegments(t)
     coords_as_linesegments = LinesCurvesNodes.combine_points_into_linesegments(linesegment_ranges, x, y)
 
 
-    #out to out range of cross-section
-    ΔX = abs(maximum(x) - minimum(x)) + maximum(t)
-    ΔY = abs(maximum(y) - minimum(y)) + maximum(t)
+    figure = Figure(size = (options.drawing_size[1], options.drawing_size[2]), backgroundcolor=options.backgroundcolor)
+    ax = Axis(figure[1, 1], backgroundcolor=options.backgroundcolor)
 
-    figure = Figure(size = (ΔX , ΔY) .* 72 .* drawing_scale)
-    ax = Axis(figure[1, 1])
-    thickness_scale = maximum(t) * 72 * drawing_scale
+    if options.hidedecorations == true
+        hidedecorations!(ax)  # hides ticks, grid and labels
+    end
+
+    if options.hidespines == true
+        hidespines!(ax)  # hide the frame
+    end
+  
 
     for i in eachindex(coords_as_linesegments)
-    
-        linewidth = t_segments[i] ./ maximum(t) * thickness_scale
+
+        linewidth = t_segments[i] .* options.thickness_scale
 
         x_segment = [coords_as_linesegments[i][j][1] for j in eachindex(coords_as_linesegments[i])]
         y_segment = [coords_as_linesegments[i][j][2] for j in eachindex(coords_as_linesegments[i])]
 
-        # print(x_segment)
-        if length(x) == length(t)  #closed section
+        if (length(x) == length(t)) & (i == size(coords_as_linesegments)[1])  #closed section
 
-            lines!(ax, [x_segment; x_segment[1]], [y_segment; y_segment[1]], linewidth = linewidth, color = linecolor)
+            x_segment_start = [coords_as_linesegments[1][j][1] for j in eachindex(coords_as_linesegments[1])]
+            y_segment_start = [coords_as_linesegments[1][j][2] for j in eachindex(coords_as_linesegments[1])]
+    
+             lines!(ax, [x_segment; x_segment_start[1]; x_segment_start[2]], [y_segment; y_segment_start[1]; y_segment_start[2]], linewidth = linewidth, color = options.linecolor, joinstyle=options.joinstyle)
 
         else #open section 
 
-            lines!(ax, x_segment, y_segment, linewidth = linewidth, color = linecolor)
+            lines!(ax, x_segment, y_segment, linewidth = linewidth, color = options.linecolor, joinstyle=options.joinstyle, linecap=options.linecap)
 
         end
 
