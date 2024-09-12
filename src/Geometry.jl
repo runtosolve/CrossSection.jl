@@ -1,7 +1,25 @@
 module Geometry 
 
 
-using LinesCurvesNodes, LinearAlgebra, StaticArrays, LazySets, Statistics
+using LinesCurvesNodes, LinearAlgebra, StaticArrays, LazySets, Statistics, Parameters
+
+
+@with_kw struct Geometry
+
+    L::Vector{Float64}
+    θ::Vector{Float64}
+    n::Vector{Int}
+    r::Vector{Float64}
+    n_r::Vector{Int}
+    t::Float64
+    centerline_location::String
+    offset::Vector{Float64}
+
+    center::Vector{Vector{Float64}}
+    left::Vector{Vector{Float64}}
+    right::Vector{Vector{Float64}}
+
+end
 
 
 function generate_thin_walled(L, θ, n)
